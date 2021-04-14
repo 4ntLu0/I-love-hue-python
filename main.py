@@ -18,11 +18,13 @@ class myrect:
     moving = False
     moving_colour = (0,0,0)
     originals = 0,0,0,0
+    location = 0,0,0,0
     def __init__(self, rect, colour, moving=False):
         self.rect = rect
         self.colour = colour
         self.moving = False
         self.originals = rect.left, rect.top, rect.width, rect.height
+        self.location = self.rect.left, self.rect.top, self.rect.width, self.rect.height
 
     def set_moving(self):
         self.moving = True
@@ -54,6 +56,13 @@ class myrect:
 
     def reset_originals(self):
         self.rect = pygame.Rect(self.originals)
+
+    def set_location(self, locations):
+        self.location = locations
+        self.rect = pygame.Rect(self.location)
+
+    def get_location(self):
+        return self.location
 
 
 def generateSteps(c1, c2, numSteps):
@@ -356,6 +365,7 @@ def ilovehue():
 
     tempcol = 0, 0, 0, 0
     moving = False
+    locations = 0,0,0,0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -368,6 +378,7 @@ def ilovehue():
                     if i.rect.collidepoint(event.pos):
                         i.moving = True
                         tempcol = i.colour
+                        locations = i.get_location()
                         # print(tempcol)
                         temprect = i.get_rect()
                         # rects.append(myrect(temprect, (0,0,0)))
@@ -382,7 +393,7 @@ def ilovehue():
                     if i.rect.collidepoint(event.pos):
                         # swap currentRect and i.
 
-                        print(tempcol)
+                        if debug: print(tempcol)
                         i.set_col(tempcol)
                         drawFromRects(testWindow, rects)
                         # pass
