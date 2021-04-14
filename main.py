@@ -93,11 +93,6 @@ def createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
             pygame.draw.rect(myscreen, newGrid[i][j], (x, y, x_block, y_block), 0)
             pygame.display.update()
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit();
-                sys.exit();
 
 
 def shuffleBoardyx(grid, x_step, y_step, constants):
@@ -202,6 +197,12 @@ def getColours(window, win_size, steps):
             templist.append(pygame.Surface.get_at(window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
         grid.append(templist)
     return grid
+
+
+def gridToRects(win_size, steps, grid):
+    # note: do we need window?
+    pass
+
 
 
 def drawGridLoose(window, win_size, steps, grid):
