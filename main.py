@@ -4,6 +4,10 @@ import sys
 import random
 import time
 
+# TODO: change to billinear smoothed generation
+# TODO: change to array[x][y] instead of array[y][x] (for simplicity)
+# TODO: draw each rectangle as an individual rectangle. (maybe an array?)
+
 
 def generateSteps(c1, c2, numSteps):
     """
@@ -34,7 +38,10 @@ def generateSteps(c1, c2, numSteps):
     return strip
 
 
-def createColourGrid(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
+def createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
+    """
+    creates a Y-X bound colour grid using custom interpolation.
+    """
     myscreen = pygame.display.set_mode(windowSize)
 
     # determines the sizes of each block.
@@ -92,7 +99,10 @@ def createColourGrid(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
                 sys.exit();
 
 
-def shuffleBoard(grid, x_step, y_step, constants):
+def shuffleBoardyx(grid, x_step, y_step, constants):
+    """
+    shuffles a board using a board which is y-x bound.
+    """
     templist = []
     print(constants)
     for y in range(0, y_step):
@@ -118,6 +128,36 @@ def shuffleBoard(grid, x_step, y_step, constants):
         newGrid.append(shuffleList)
 
     return newGrid
+
+def generateSmoothBoard(window, colours, colours_size=(2,2), targetRect=pygame.Rect(0,0,400,400)):
+    """
+    colours is going to be a LIST of lists defined in this way:
+        [[colour, location], [colour, location]]
+        [[(rr,gg,bb), (x_step, y_step)], [(rr,gg,bb), (x_step, y_step)]]
+        where rrggbb are rgb values and x_step and y_step or the location given a typical 0,0 start
+          0 1 2 3 4 5 6 7 8 9
+        0 . . . . . . . . . .
+        1 . . . . . . . . . .
+        2 . . . . . . . . . .
+        3 . . . . . . . . . .
+        4 . . . . . . . . . .
+        5 . . . . . . . . . .
+        6 . . . . . . . . . .
+        7 . . . . . . . . . .
+        8 . . . . . . . . . .
+        9 . . . . . . . . . .
+    x_size, y_size denote the x/y sizes of the board. Default is 2x2
+        THESE MUST MATCH WITH THE COLOUR SIZING
+    targetRect is a rect of same size as window.
+    """
+    # TODO: allow dynamic assignment of target rect
+
+    colour_rect = pygame.Surface(colours_size) # x by y bitmap
+    for i in colours:
+        pygame.draw.line(colour_rect, i[0], i[1], i[1])
+    colour_rect = pygame.transform.smoothscale(colour_rect, (targetRect.width, targetRect.height))
+    window.blit(colour_rect, targetRect)
+    pygame.display.update()
 
 
 if __name__ == "__main__":
@@ -163,8 +203,22 @@ if __name__ == "__main__":
     # constants.append((6, 0))
     # constants.append((3, 3))
 
+    # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
 
+    testWindow = pygame.display.set_mode(windowSize)
+    pygame.display.set_caption("test_window")
+    colours = []
+    colours.append([(33,11,84),(0,0)])
+    colours.append([(201,205,242), (0,1)])
+    colours.append([(201,255,240), (1,1)])
+    colours.append([(6,39,69),(1,0)])
 
-    createColourGrid(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
+    colours_size = (2,2)
 
+    generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0,0,400,400))
 
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit();
+                sys.exit();
