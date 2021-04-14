@@ -13,9 +13,10 @@ class myrect:
     rect = ""
     colour = ""
     moving = False
-    def __init__(self, colour, rect):
+    def __init__(self, rect, colour, moving=False):
         self.rect = rect
         self.colour = colour
+        self.moving = False
 
     def set_moving(self):
         self.moving = True
@@ -238,7 +239,7 @@ def gridToRects(win_size, steps, grid):
     for x in range(0, x_step):
         for y in range(0, y_step):
             rect = pygame.Rect(x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar)
-            rects.append((rect, grid[x][y]))
+            rects.append(myrect(rect,grid[x][y]))
 
     return rects
 
@@ -258,7 +259,7 @@ def drawGridLoose(window, win_size, steps, grid):
 
 def drawFromRects(window, rects):
     for i in rects:
-        pygame.draw.rect(window, i[1], i[0])
+        pygame.draw.rect(window, i.colour, i.rect)
     pygame.display.update()
 
 
@@ -334,6 +335,21 @@ def ilovehue():
             moving = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # there needs to be a class here to activate each rectangles movement
+                for i in rects:
+                    if i.rect.collidepoint(event.pos):
+                        i.moving = True
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                for i in rects:
+                    i.moving = False
+
+            elif event.type == pygame.MOUSEMOTION:
+                for i in rects:
+                    if i.moving:
+                        i.rect.move_ip(event.rel)
+
+        drawFromRects(testWindow, rects)
+        pygame.display.update()
 
         pygame.display.update()
 
