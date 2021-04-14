@@ -14,11 +14,12 @@ import time
 
 class myrect:
     rect = ""
-    colour = ""
+    colour = 0,0,0
     moving = False
-    moving_colour = (0,0,0)
+    moving_colour = 0,0,0
     originals = 0,0,0,0
     location = 0,0,0,0
+    has_moved = False
     def __init__(self, rect, colour, moving=False):
         self.rect = rect
         self.colour = colour
@@ -377,12 +378,8 @@ def ilovehue():
                 for i in rects:
                     if i.rect.collidepoint(event.pos):
                         i.moving = True
+                        i.has_moved = True
                         tempcol = i.colour
-                        locations = i.get_location()
-                        # print(tempcol)
-                        temprect = i.get_rect()
-                        # rects.append(myrect(temprect, (0,0,0)))
-                        cur_class = i
 
 
             if event.type == pygame.MOUSEBUTTONUP:
@@ -392,23 +389,28 @@ def ilovehue():
                     i.reset_originals()
                     if i.rect.collidepoint(event.pos):
                         # swap currentRect and i.
-
+                        swapcol = i.colour
+                        # print(swapcol)
                         if debug: print(tempcol)
                         i.set_col(tempcol)
+
+                        for j in rects:
+                            if j.has_moved:
+                                j.colour = swapcol
+                                j.has_moved = False
+
                         drawFromRects(testWindow, rects)
+                        pygame.display.update()
                         # pass
 
             if event.type == pygame.MOUSEMOTION:
                 for i in rects:
                     if i.moving:
-                        temprect = i.rect
-                        # tempcol = i.colour
                         i.rect.move_ip(event.rel)
 
                         drawFromRects(testWindow, rects)
 
                         # until i figure out a better solution, we have to draw two rects.
-                        rectdefs = i.rect.left, i.rect.top, i.rect.width, i.rect.height
                         # TODO: add a way to add a blank
                         drawRect(testWindow, i)
 
