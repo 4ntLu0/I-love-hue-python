@@ -5,18 +5,24 @@ import random
 import time
 
 
-# TODO: change to billinear smoothed generation
-# TODO: change to array[x][y] instead of array[y][x] (for simplicity)
-# TODO: draw each rectangle as an individual rectangle. (maybe an array?)
+# TODO: add circles for constant rectangles
+# TODO: add swapping functions.
+
+# DONE: change to billinear smoothed generation
+# DONE: change to array[x][y] instead of array[y][x] (for simplicity)
+# DONE: draw each rectangle as an individual rectangle. (maybe an array?)
 
 class myrect:
     rect = ""
     colour = ""
     moving = False
+    moving_colour = (0,0,0)
+    originals = 0,0,0,0
     def __init__(self, rect, colour, moving=False):
         self.rect = rect
         self.colour = colour
         self.moving = False
+        self.originals = rect.left, rect.top, rect.width, rect.height
 
     def set_moving(self):
         self.moving = True
@@ -27,14 +33,27 @@ class myrect:
     def get_rect(self):
         return self.rect
 
-    def get_col(self):
-        return self.colour
+    def get_col(self, bypass=False):
+        if bypass:
+            return self.colour
+        elif self.moving:
+            return self.moving_colour
+        else:
+            return self.colour
 
     def set_rect(self, rect):
         self.rect = rect
 
     def set_col(self, colour):
         self.colour = colour
+
+    def selfblit(self, win_size, window):
+        surface = pygame.Surface(win_size)
+        pygame.draw.rect(surface, self.colour, self.rect)
+        pygame.Surface.blit(surface, window, self.rect)
+
+    def reset_originals(self):
+        self.rect = pygame.Rect(self.originals)
 
 
 def generateSteps(c1, c2, numSteps):
@@ -259,11 +278,18 @@ def drawGridLoose(window, win_size, steps, grid):
 
 def drawFromRects(window, rects):
     for i in rects:
-        pygame.draw.rect(window, i.colour, i.rect)
-    pygame.display.update()
+        pygame.draw.rect(window, i.get_col(), i.rect)
+
+def drawRect(window, i):
+    pygame.draw.rect(window, i.get_col(True), i.rect)
+
+def drawBlank(window, locs):
+    rect = pygame.Rect(locs)
+    pygame.draw.rect(window, (0,0,0), rect)
 
 
 def ilovehue():
+    debug = False
     window_size = (400, 400)
 
     # common sizes for 1200x900
@@ -325,6 +351,7 @@ def ilovehue():
     shufflegrid = shuffleBoardxy(grid, steps, constants)
     rects = gridToRects(window_size, steps, shufflegrid)
     drawFromRects(testWindow, rects)
+    pygame.display.update()
     # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
 
     while True:
@@ -338,18 +365,33 @@ def ilovehue():
                 for i in rects:
                     if i.rect.collidepoint(event.pos):
                         i.moving = True
+                        temprect = i.get_rect()
+                        # rects.append(myrect(temprect, (0,0,0)))
+                        cur_class = i
 
-            elif event.type == pygame.MOUSEBUTTONUP:
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if debug: print("mouseup")
                 for i in rects:
                     i.moving = False
+                    i.reset_originals()
+                    if i.rect.collidepoint(event.pos):
+                        # swap currentRect and i.
+                        pass
 
-            elif event.type == pygame.MOUSEMOTION:
+            if event.type == pygame.MOUSEMOTION:
                 for i in rects:
                     if i.moving:
+                        temprect = i.rect
+                        tempcol = i.colour
                         i.rect.move_ip(event.rel)
 
-        drawFromRects(testWindow, rects)
-        pygame.display.update()
+                        drawFromRects(testWindow, rects)
+
+                        # until i figure out a better solution, we have to draw two rects.
+                        rectdefs = i.rect.left, i.rect.top, i.rect.width, i.rect.height
+                        # TODO: add a way to add a blank
+                        drawRect(testWindow, i)
 
         pygame.display.update()
 
