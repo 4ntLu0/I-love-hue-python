@@ -4,6 +4,7 @@ import sys
 import random
 import time
 
+
 # TODO: change to billinear smoothed generation
 # TODO: change to array[x][y] instead of array[y][x] (for simplicity)
 # TODO: draw each rectangle as an individual rectangle. (maybe an array?)
@@ -108,7 +109,7 @@ def shuffleBoardyx(grid, x_step, y_step, constants):
     for y in range(0, y_step):
         for x in range(0, x_step):
             # we will ignore i/j if they are in our constants.
-            if (x,y) in constants:
+            if (x, y) in constants:
                 continue
             else:
                 templist.append(grid[y][x])
@@ -120,7 +121,7 @@ def shuffleBoardyx(grid, x_step, y_step, constants):
     for y in range(0, y_step):
         shuffleList = []
         for x in range(0, x_step):
-            if (x,y) in constants:
+            if (x, y) in constants:
                 shuffleList.append(grid[y][x])
             else:
                 shuffleList.append(templist[count])
@@ -129,7 +130,34 @@ def shuffleBoardyx(grid, x_step, y_step, constants):
 
     return newGrid
 
-def generateSmoothBoard(window, colours, colours_size=(2,2), targetRect=pygame.Rect(0,0,400,400)):
+
+def shuffleBoardxy(grid, steps, constants):
+    x_step, y_step = steps
+    templist = []
+    for x in range(0, x_step):
+        for y in range(0, y_step):
+            if (x, y) in constants:
+                continue
+            else:
+                templist.append(grid[x][y])
+
+    random.shuffle(templist)
+
+    shuffle_grid = []
+    count = 0
+    for x in range(0, x_step):
+        shuffleList = []
+        for y in range(0, y_step):
+            if (x, y) in constants:
+                shuffleList.append(grid[x][y])
+            else:
+                shuffleList.append(templist[count])
+                count += 1
+        shuffle_grid.append(shuffleList)
+
+    return shuffle_grid
+
+def generateSmoothBoard(window, colours, colours_size=(2, 2), targetRect=pygame.Rect(0, 0, 400, 400)):
     """
     colours is going to be a LIST of lists defined in this way:
         [[colour, location], [colour, location]]
@@ -152,7 +180,7 @@ def generateSmoothBoard(window, colours, colours_size=(2,2), targetRect=pygame.R
     """
     # TODO: allow dynamic assignment of target rect
 
-    colour_rect = pygame.Surface(colours_size) # x by y bitmap
+    colour_rect = pygame.Surface(colours_size)  # x by y bitmap
     for i in colours:
         pygame.draw.line(colour_rect, i[0], i[1], i[1])
     colour_rect = pygame.transform.smoothscale(colour_rect, (targetRect.width, targetRect.height))
@@ -160,10 +188,39 @@ def generateSmoothBoard(window, colours, colours_size=(2,2), targetRect=pygame.R
     pygame.display.update()
 
 
+def getColours(window, win_size, steps):
+    grid = []
+    x_size, y_size = win_size
+    x_step, y_step = steps
+
+    x_loc_scalar = x_size / x_step
+    y_loc_scalar = y_size / y_step
+
+    for x in range(0, x_step):
+        templist = []
+        for y in range(0, y_step):
+            templist.append(pygame.Surface.get_at(window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
+        grid.append(templist)
+    return grid
+
+
+def drawGridLoose(window, win_size, steps, grid):
+    x_size, y_size = win_size
+    x_step, y_step = steps
+
+    x_loc_scalar = x_size / x_step
+    y_loc_scalar = y_size / y_step
+
+    for x in range(0, x_step):
+        for y in range(0, y_step):
+            pygame.draw.rect(window, grid[x][y], (x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar))
+    pygame.display.update()
+
+
 if __name__ == "__main__":
     pygame.init()
 
-    windowSize = (400, 400)
+    window_size = (400, 400)
 
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
@@ -174,8 +231,8 @@ if __name__ == "__main__":
     # 50x50:    x=24    y=18
 
     # for 900x900, 9, 6, 3
-    x_step = 8
-    y_step = 8
+    steps = 8, 8
+    x_step, y_step = steps
 
     # use 4 random colours for now
     c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
@@ -188,13 +245,13 @@ if __name__ == "__main__":
     constants = []
 
     # general block
-    constants.append((0,0))
-    constants.append((x_step-1,y_step-1))
-    constants.append((0,y_step-1))
-    constants.append((x_step-1,0))
+    constants.append((0, 0))
+    constants.append((x_step - 1, y_step - 1))
+    constants.append((0, y_step - 1))
+    constants.append((x_step - 1, 0))
 
     # center block
-    constants.append((((x_step-1)/2),((y_step-1)/2)))
+    constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
 
     # 7x7 block
     # constants.append((0, 0))
@@ -205,17 +262,23 @@ if __name__ == "__main__":
 
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
 
-    testWindow = pygame.display.set_mode(windowSize)
+    testWindow = pygame.display.set_mode(window_size)
     pygame.display.set_caption("test_window")
     colours = []
-    colours.append([(33,11,84),(0,0)])
-    colours.append([(201,205,242), (0,1)])
-    colours.append([(201,255,240), (1,1)])
-    colours.append([(6,39,69),(1,0)])
+    colours.append([(33, 11, 84), (0, 0)])
+    colours.append([(201, 205, 242), (0, 1)])
+    colours.append([(201, 255, 240), (1, 1)])
+    colours.append([(6, 39, 69), (1, 0)])
+    # colours.append([(240,230,140),(1,0)])
+    # colours.append([(129,0,0), (1,1)])
 
     colours_size = (2,2)
 
-    generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0,0,400,400))
+    generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0, 0, 400, 400))
+    grid = getColours(testWindow, window_size, steps)
+    drawGridLoose(testWindow, window_size, steps, grid)
+    # shufflegrid = shuffleBoardxy(grid, steps, constants)
+    # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
 
     while True:
         for event in pygame.event.get():
