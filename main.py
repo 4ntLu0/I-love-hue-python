@@ -9,6 +9,32 @@ import time
 # TODO: change to array[x][y] instead of array[y][x] (for simplicity)
 # TODO: draw each rectangle as an individual rectangle. (maybe an array?)
 
+class myrect:
+    rect = ""
+    colour = ""
+    moving = False
+    def __init__(self, colour, rect):
+        self.rect = rect
+        self.colour = colour
+
+    def set_moving(self):
+        self.moving = True
+
+    def stop_moving(self):
+        self.moving = False
+
+    def get_rect(self):
+        return self.rect
+
+    def get_col(self):
+        return self.colour
+
+    def set_rect(self, rect):
+        self.rect = rect
+
+    def set_col(self, colour):
+        self.colour = colour
+
 
 def generateSteps(c1, c2, numSteps):
     """
@@ -94,7 +120,6 @@ def createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
             pygame.display.update()
 
 
-
 def shuffleBoardyx(grid, x_step, y_step, constants):
     """
     shuffles a board using a board which is y-x bound.
@@ -152,6 +177,7 @@ def shuffleBoardxy(grid, steps, constants):
 
     return shuffle_grid
 
+
 def generateSmoothBoard(window, colours, colours_size=(2, 2), targetRect=pygame.Rect(0, 0, 400, 400)):
     """
     colours is going to be a LIST of lists defined in this way:
@@ -201,8 +227,20 @@ def getColours(window, win_size, steps):
 
 def gridToRects(win_size, steps, grid):
     # note: do we need window?
-    pass
+    rects = []
+    x_size, y_size = win_size
+    x_step, y_step = steps
 
+    x_loc_scalar = x_size / x_step
+    y_loc_scalar = y_size / y_step
+
+    # rects contains RECTANGLE and then COLOUR
+    for x in range(0, x_step):
+        for y in range(0, y_step):
+            rect = pygame.Rect(x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar)
+            rects.append((rect, grid[x][y]))
+
+    return rects
 
 
 def drawGridLoose(window, win_size, steps, grid):
@@ -218,9 +256,13 @@ def drawGridLoose(window, win_size, steps, grid):
     pygame.display.update()
 
 
-if __name__ == "__main__":
-    pygame.init()
+def drawFromRects(window, rects):
+    for i in rects:
+        pygame.draw.rect(window, i[1], i[0])
+    pygame.display.update()
 
+
+def ilovehue():
     window_size = (400, 400)
 
     # common sizes for 1200x900
@@ -273,12 +315,15 @@ if __name__ == "__main__":
     # colours.append([(240,230,140),(1,0)])
     # colours.append([(129,0,0), (1,1)])
 
-    colours_size = (2,2)
+    colours_size = (2, 2)
 
     generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0, 0, 400, 400))
     grid = getColours(testWindow, window_size, steps)
     drawGridLoose(testWindow, window_size, steps, grid)
-    # shufflegrid = shuffleBoardxy(grid, steps, constants)
+    time.sleep(1)
+    shufflegrid = shuffleBoardxy(grid, steps, constants)
+    rects = gridToRects(window_size, steps, shufflegrid)
+    drawFromRects(testWindow, rects)
     # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
 
     while True:
@@ -286,3 +331,14 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 pygame.quit();
                 sys.exit();
+            moving = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # there needs to be a class here to activate each rectangles movement
+
+        pygame.display.update()
+
+
+if __name__ == "__main__":
+    pygame.init()
+
+    ilovehue()
