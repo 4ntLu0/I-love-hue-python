@@ -14,12 +14,13 @@ import time
 
 class myrect:
     rect = ""
-    colour = 0,0,0
+    colour = 0, 0, 0
     moving = False
-    moving_colour = 0,0,0
-    originals = 0,0,0,0
-    location = 0,0,0,0
+    moving_colour = 0, 0, 0
+    originals = 0, 0, 0, 0
+    location = 0, 0, 0, 0
     has_moved = False
+
     def __init__(self, rect, colour, moving=False):
         self.rect = rect
         self.colour = colour
@@ -268,7 +269,7 @@ def gridToRects(win_size, steps, grid):
     for x in range(0, x_step):
         for y in range(0, y_step):
             rect = pygame.Rect(x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar)
-            rects.append(myrect(rect,grid[x][y]))
+            rects.append(myrect(rect, grid[x][y]))
 
     return rects
 
@@ -290,12 +291,14 @@ def drawFromRects(window, rects):
     for i in rects:
         pygame.draw.rect(window, i.get_col(), i.rect)
 
+
 def drawRect(window, i):
     pygame.draw.rect(window, i.get_col(True), i.rect)
 
+
 def drawBlank(window, locs):
     rect = pygame.Rect(locs)
-    pygame.draw.rect(window, (0,0,0), rect)
+    pygame.draw.rect(window, (0, 0, 0), rect)
 
 
 def ilovehue():
@@ -366,7 +369,7 @@ def ilovehue():
 
     tempcol = 0, 0, 0, 0
     moving = False
-    locations = 0,0,0,0
+    locations = 0, 0, 0, 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -380,7 +383,6 @@ def ilovehue():
                         i.moving = True
                         i.has_moved = True
                         tempcol = i.colour
-
 
             if event.type == pygame.MOUSEBUTTONUP:
                 if debug: print("mouseup")
@@ -399,9 +401,7 @@ def ilovehue():
                                 j.colour = swapcol
                                 j.has_moved = False
 
-                        drawFromRects(testWindow, rects)
-                        pygame.display.update()
-                        # pass
+                drawFromRects(testWindow, rects)
 
             if event.type == pygame.MOUSEMOTION:
                 for i in rects:
