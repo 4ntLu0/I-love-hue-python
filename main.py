@@ -354,17 +354,21 @@ def ilovehue():
     pygame.display.update()
     # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
 
+    tempcol = 0, 0, 0, 0
+    moving = False
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit();
                 sys.exit();
-            moving = False
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # there needs to be a class here to activate each rectangles movement
                 for i in rects:
                     if i.rect.collidepoint(event.pos):
                         i.moving = True
+                        tempcol = i.colour
+                        # print(tempcol)
                         temprect = i.get_rect()
                         # rects.append(myrect(temprect, (0,0,0)))
                         cur_class = i
@@ -377,13 +381,17 @@ def ilovehue():
                     i.reset_originals()
                     if i.rect.collidepoint(event.pos):
                         # swap currentRect and i.
-                        pass
+
+                        print(tempcol)
+                        i.set_col(tempcol)
+                        drawFromRects(testWindow, rects)
+                        # pass
 
             if event.type == pygame.MOUSEMOTION:
                 for i in rects:
                     if i.moving:
                         temprect = i.rect
-                        tempcol = i.colour
+                        # tempcol = i.colour
                         i.rect.move_ip(event.rel)
 
                         drawFromRects(testWindow, rects)
