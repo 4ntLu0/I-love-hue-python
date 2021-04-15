@@ -7,6 +7,7 @@ import time
 
 # TODO: add circles for constant rectangles
 # TODO: add swapping functions.
+# TODO: make constants unmovable
 
 # DONE: change to billinear smoothed generation
 # DONE: change to array[x][y] instead of array[y][x] (for simplicity)
@@ -469,6 +470,7 @@ def ilovehue():
                 print("you have won")
                 drawGridLoose(testWindow, window_size, steps, grid)
                 pygame.display.update()
+                time.sleep(10)
                 running = False
         pygame.display.update()
 
