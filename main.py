@@ -163,8 +163,6 @@ def createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants):
             pygame.draw.rect(myscreen, colourGrid[i][j], (x, y, x_block, y_block), 0)
             pygame.display.update()
 
-    time.sleep(1)
-
     for i in range(0, y_step):
         for j in range(0, x_step):
             # we are now going through each step left to right for each row.
