@@ -12,7 +12,7 @@ import time
 # DONE: change to array[x][y] instead of array[y][x] (for simplicity)
 # DONE: draw each rectangle as an individual rectangle. (maybe an array?)
 
-class myrect:
+class MyRect:
     rect = ""
     colour = 0, 0, 0
     moving = False
@@ -66,6 +66,29 @@ class myrect:
     def get_location(self):
         return self.location
 
+class Grid:
+    """
+    This class should contain the entire grid. It will contain rgb values and positions of rects.
+    """
+
+    # recall that grids are [x][y] arrays of RGB TRIOS only.
+    # rectgrids are paired as rectangles of colour and location.
+    def __init__(self, grid):
+        self.original_grid = grid
+        self.shuffle_grid = grid
+        self.rect_grid = None
+
+    def setShuffleGrid(self, shuffleGrid):
+        self.shuffle_grid = shuffleGrid
+
+    def checkGrids(self):
+        if self.original_grid==self.shuffle_grid:
+            return True
+        else:
+            return False
+
+    def setRectGrid(self, rectGrid):
+        self.rect_grid = rectGrid
 
 def generateSteps(c1, c2, numSteps):
     """
@@ -182,7 +205,11 @@ def shuffleBoardyx(grid, x_step, y_step, constants):
     return newGrid
 
 
-def shuffleBoardxy(grid, steps, constants):
+def shuffleBoardxy(grid, steps, constants, bypass=False):
+    # if you want to bypass grid shuffling
+    if bypass:
+        return grid
+
     x_step, y_step = steps
     templist = []
     for x in range(0, x_step):
@@ -269,7 +296,7 @@ def gridToRects(win_size, steps, grid):
     for x in range(0, x_step):
         for y in range(0, y_step):
             rect = pygame.Rect(x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar)
-            rects.append(myrect(rect, grid[x][y]))
+            rects.append(MyRect(rect, grid[x][y]))
 
     return rects
 
@@ -348,10 +375,19 @@ def ilovehue():
     testWindow = pygame.display.set_mode(window_size)
     pygame.display.set_caption("test_window")
     colours = []
-    colours.append([(33, 11, 84), (0, 0)])
-    colours.append([(201, 205, 242), (0, 1)])
-    colours.append([(201, 255, 240), (1, 1)])
-    colours.append([(6, 39, 69), (1, 0)])
+    # set 1
+    colours.append([(255, 153, 51),(1,1)])
+    colours.append([(153, 51, 255),(0,1)])
+    colours.append([(51, 153, 255),(0,0)])
+    colours.append([(51, 255, 153),(1,0)])
+
+    # set 2
+    # colours.append([(33, 11, 84), (0, 0)])
+    # colours.append([(201, 205, 242), (0, 1)])
+    # colours.append([(201, 255, 240), (1, 1)])
+    # colours.append([(6, 39, 69), (1, 0)])
+
+
     # colours.append([(240,230,140),(1,0)])
     # colours.append([(129,0,0), (1,1)])
 
@@ -359,10 +395,19 @@ def ilovehue():
 
     generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0, 0, 400, 400))
     grid = getColours(testWindow, window_size, steps)
+
+    game_grid = Grid(grid) # extra but we will keep for now
+
     drawGridLoose(testWindow, window_size, steps, grid)
     time.sleep(1)
-    shufflegrid = shuffleBoardxy(grid, steps, constants)
-    rects = gridToRects(window_size, steps, shufflegrid)
+    shufflegrid = shuffleBoardxy(grid=grid, steps=steps, constants=constants)
+
+    game_grid.setShuffleGrid(shufflegrid)
+
+    rects = gridToRects(window_size, steps, game_grid.shuffle_grid)
+
+    game_grid.setRectGrid(rects)
+
     drawFromRects(testWindow, rects)
     pygame.display.update()
     # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
