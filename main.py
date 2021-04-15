@@ -334,7 +334,30 @@ def checkWin(grid, window, win_size, steps):
     else:
         return False
 
-def ilovehue():
+def endgame(window, win_size):
+    x_size, y_size = win_size
+    image = pygame.image.load("end_screen_penguin.jpg")
+    window.fill((255,255,255))
+
+    window.blit(image, (136,150))
+
+    # foreground = (255, 143, 69)
+    background = (255, 255, 255)
+    foreground = (145, 230, 188)
+    font = pygame.font.Font('freesansbold.ttf', 38)
+    text = font.render('YOU WON', True, foreground, background)
+    textRect = text.get_rect()
+    textRect.center = 200, 50
+    window.blit(text, textRect)
+
+    while True:
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+def ilovehue(steps):
     debug = False
     window_size = (400, 400)
 
@@ -347,7 +370,7 @@ def ilovehue():
     # 50x50:    x=24    y=18
 
     # for 900x900, 9, 6, 3
-    steps = 4, 4
+    # steps = 8, 8
     x_step, y_step = steps
 
     # use 4 random colours for now
@@ -417,7 +440,6 @@ def ilovehue():
     drawFromRects(testWindow, rects)
     pygame.display.update()
     # drawGridLoose(shuffleWindow, window_size, steps, shufflegrid)
-
     tempcol = 0, 0, 0, 0
     moving = False
     locations = 0, 0, 0, 0
@@ -470,12 +492,15 @@ def ilovehue():
                 print("you have won")
                 drawGridLoose(testWindow, window_size, steps, grid)
                 pygame.display.update()
-                time.sleep(10)
+                # time.sleep(10)
                 running = False
         pygame.display.update()
+    endgame(testWindow, window_size)
 
 
 if __name__ == "__main__":
     pygame.init()
 
-    ilovehue()
+    blocks = int(input("how many blocks would you like: "))
+    steps = (blocks, blocks)
+    ilovehue(steps)
