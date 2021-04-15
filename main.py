@@ -372,37 +372,43 @@ def ilovehue(steps):
     # for 900x900, 9, 6, 3
     # steps = 8, 8
     x_step, y_step = steps
+    colours = []
+    # set 1
+    # colours.append([(255, 153, 51),(1,1)])
+    # colours.append([(153, 51, 255),(0,1)])
+    # colours.append([(51, 153, 255),(0,0)])
+    # colours.append([(51, 255, 153),(1,0)])
+
+    # set 2
+    # colours.append([(33, 11, 84), (0, 0)])
+    # colours.append([(201, 205, 242), (0, 1)])
+    # colours.append([(201, 255, 240), (1, 1)])
+    # colours.append([(6, 39, 69), (1, 0)])
+
+    # set 3
+    # colours.append([(0, 17, 54), (0, 0)])
+    # colours.append([(150, 255, 210), (0, 1)])
+    # colours.append([(255, 255, 255), (0, 2)])
+    # colours.append([(183, 78, 212), (1, 0)])
+    # colours.append([(197, 181, 255), (1, 1)])
+    # colours.append([(255, 229, 97), (1, 2)])
+    # colours.append([(148, 0, 55), (2, 0)])
+    # colours.append([(235, 115, 159), (2, 1)])
+    # colours.append([(191, 244, 255), (2, 2)])
+
+    # colours.append([(240,230,140),(1,0)])
+    # colours.append([(129,0,0), (1,1)])
+
+    # set 4
+    colours.append([(255, 255, 255), (0, 0)])
+    colours.append([(168, 220, 255), (0, 1)])
+    colours.append([(0, 29, 69), (1, 1)])
+    colours.append([(255, 171, 107), (1, 0)])
+
+    colours_size = (2, 2)
     if (x_step, y_step) == (0, 0):
         testWindow = pygame.display.set_mode(window_size)
         pygame.display.set_caption("test_window")
-        colours = []
-        # set 1
-        # colours.append([(255, 153, 51),(1,1)])
-        # colours.append([(153, 51, 255),(0,1)])
-        # colours.append([(51, 153, 255),(0,0)])
-        # colours.append([(51, 255, 153),(1,0)])
-
-        # set 2
-        # colours.append([(33, 11, 84), (0, 0)])
-        # colours.append([(201, 205, 242), (0, 1)])
-        # colours.append([(201, 255, 240), (1, 1)])
-        # colours.append([(6, 39, 69), (1, 0)])
-
-        # set 3
-        colours.append([(0, 17, 54), (0, 0)])
-        colours.append([(150, 255, 210), (0, 1)])
-        colours.append([(255, 255, 255), (0, 2)])
-        colours.append([(183, 78, 212), (1, 0)])
-        colours.append([(197, 181, 255), (1, 1)])
-        colours.append([(255, 229, 97), (1, 2)])
-        colours.append([(148, 0, 55), (2, 0)])
-        colours.append([(235, 115, 159), (2, 1)])
-        colours.append([(191, 244, 255), (2, 2)])
-
-        # colours.append([(240,230,140),(1,0)])
-        # colours.append([(129,0,0), (1,1)])
-
-        colours_size = (2, 2)
 
         generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0, 0, 400, 400))
 
@@ -445,34 +451,6 @@ def ilovehue(steps):
 
     testWindow = pygame.display.set_mode(window_size)
     pygame.display.set_caption("test_window")
-    colours = []
-    # set 1
-    # colours.append([(255, 153, 51),(1,1)])
-    # colours.append([(153, 51, 255),(0,1)])
-    # colours.append([(51, 153, 255),(0,0)])
-    # colours.append([(51, 255, 153),(1,0)])
-
-    # set 2
-    # colours.append([(33, 11, 84), (0, 0)])
-    # colours.append([(201, 205, 242), (0, 1)])
-    # colours.append([(201, 255, 240), (1, 1)])
-    # colours.append([(6, 39, 69), (1, 0)])
-
-    # set 3
-    colours.append([(0, 17, 54), (0, 0)])
-    colours.append([(150, 255, 210), (0, 1)])
-    colours.append([(255, 255, 255), (0, 2)])
-    colours.append([(183, 78, 212), (1, 0)])
-    colours.append([(197, 181, 255), (1, 1)])
-    colours.append([(255, 229, 97), (1, 2)])
-    colours.append([(148, 0, 55), (2, 0)])
-    colours.append([(235, 115, 159), (2, 1)])
-    colours.append([(191, 244, 255), (2, 2)])
-
-    # colours.append([(240,230,140),(1,0)])
-    # colours.append([(129,0,0), (1,1)])
-
-    colours_size = (2, 2)
 
     generateSmoothBoard(testWindow, colours, colours_size, pygame.Rect(0, 0, 400, 400))
     grid = getColours(testWindow, window_size, steps)
@@ -544,7 +522,7 @@ def ilovehue(steps):
                 print("you have won")
                 drawGridLoose(testWindow, window_size, steps, grid)
                 pygame.display.update()
-                time.sleep(5)
+                time.sleep(1)
                 running = False
         pygame.display.update()
     endgame(testWindow, window_size)
