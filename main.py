@@ -326,6 +326,13 @@ def drawBlank(window, locs):
     pygame.draw.rect(window, (0, 0, 0), rect)
 
 
+def checkWin(grid, window, win_size, steps):
+    curr_grid = getColours(window, win_size, steps)
+    if curr_grid == grid:
+        return True
+    else:
+        return False
+
 def ilovehue():
     debug = False
     window_size = (400, 400)
@@ -339,7 +346,7 @@ def ilovehue():
     # 50x50:    x=24    y=18
 
     # for 900x900, 9, 6, 3
-    steps = 8, 8
+    steps = 4, 4
     x_step, y_step = steps
 
     # use 4 random colours for now
@@ -413,7 +420,8 @@ def ilovehue():
     tempcol = 0, 0, 0, 0
     moving = False
     locations = 0, 0, 0, 0
-    while True:
+    running = True
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit();
@@ -457,6 +465,11 @@ def ilovehue():
                         # TODO: add a way to add a blank
                         drawRect(testWindow, i)
 
+            if checkWin(grid, testWindow, window_size, steps):
+                print("you have won")
+                drawGridLoose(testWindow, window_size, steps, grid)
+                pygame.display.update()
+                running = False
         pygame.display.update()
 
 
